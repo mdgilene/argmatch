@@ -4,11 +4,11 @@ This project is a fork of [callee](https://github.com/Xion/callee).
 
 Argument matchers for _unittest.mock_
 
-![Version](https://img.shields.io/pypi/v/argmatch)
+[![Version](https://img.shields.io/pypi/v/argmatch.svg?style=flat)](https://pypi.python.org/pypi/argmatch)
 [![Development Status](https://img.shields.io/pypi/status/argmatch.svg?style=flat)](https://pypi.python.org/pypi/argmatch/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/argmatch.svg?style=flat)](https://pypi.python.org/pypi/argmatch)
 [![License](https://img.shields.io/pypi/l/argmatch.svg?style=flat)](https://github.com/Xion/argmatch/blob/master/LICENSE)
-[![Build Status](https://img.shields.io/travis/Xion/argmatch.svg?style=flat)](https://travis-ci.org/Xion/argmatch)
+[![Build Status](https://github.com/mdgilene/argmatch/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/mdgilene/argmatch/actions/workflows/python-package.yml)
 
 ## More robust tests
 
