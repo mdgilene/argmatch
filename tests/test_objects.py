@@ -78,8 +78,8 @@ class Coroutine(MatcherTestCase):
         def func():
             yield
 
-        self.assert_no_match(func)
-        self.assert_match(func())
+        super(Coroutine, self).assert_no_match(__unit__.Generator(), func)
+        super(Coroutine, self).assert_match(__unit__.Generator(), func())
 
     @skipUnless(IS_PY34, "requires Python 3.4+")
     def test_coroutine__decorator(self):

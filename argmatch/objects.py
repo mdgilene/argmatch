@@ -51,6 +51,13 @@ class Coroutine(ObjectMatcher):
         return asyncio and asyncio.iscoroutine(value)
 
 
+class Generator(ObjectMatcher):
+    """Matches an generator."""
+
+    def match(self, value):
+        return inspect.isgenerator(value)
+
+
 class FileLike(ObjectMatcher):
     """Matches a file-like object.
 
