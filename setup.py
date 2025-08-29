@@ -9,6 +9,7 @@ import ast
 import os
 from setuptools import find_packages, setup
 import sys
+from pathlib import Path
 
 
 # Utility functions
@@ -81,11 +82,14 @@ if sys.version_info < (2, 7):
 if sys.version_info < (3, 3):
     tests_require.extend(read_requirements("test-py32"))
 
+
+long_description = (Path(__file__).parent / "README.rst").read_text()
+
 setup(
     name="argmatch",
     version=tags["version"],
     description=tags["description"],
-    long_description=__doc__,
+    long_description=long_description,
     author=tags["author"],
     url="https://github.com/mdgilene/argmatch",
     license=tags["license"],
