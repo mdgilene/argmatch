@@ -83,7 +83,7 @@ if sys.version_info < (3, 3):
     tests_require.extend(read_requirements("test-py32"))
 
 
-long_description = (Path(__file__).parent / "README.rst").read_text()
+long_description = (Path(__file__).parent / "README.md").read_text()
 
 setup(
     name="argmatch",

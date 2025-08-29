@@ -1,33 +1,19 @@
 argmatch
 ======
 
-This project is a fork of `callee` located at https://github.com/Xion/callee.
+This project is a fork of [callee](https://github.com/Xion/callee).
 
 Argument matchers for *unittest.mock*
 
-|Version| |Development Status| |Python Versions| |License| |Build Status|
+[![Version](https://img.shields.io/pypi/v/argmatch.svg?style=flat)](https://pypi.python.org/pypi/argmatch)
+[![Development Status](https://img.shields.io/pypi/status/argmatch.svg?style=flat)](https://pypi.python.org/pypi/argmatch/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/argmatch.svg?style=flat)](https://pypi.python.org/pypi/argmatch)
+[![License](https://img.shields.io/pypi/l/argmatch.svg?style=flat)](https://github.com/Xion/argmatch/blob/master/LICENSE)
+[![Build Status](https://img.shields.io/travis/Xion/argmatch.svg?style=flat)](https://travis-ci.org/Xion/argmatch)
 
-.. |Version| image:: https://img.shields.io/pypi/v/argmatch.svg?style=flat
-    :target: https://pypi.python.org/pypi/argmatch
-    :alt: Version
-.. |Development Status| image:: https://img.shields.io/pypi/status/argmatch.svg?style=flat
-    :target: https://pypi.python.org/pypi/argmatch/
-    :alt: Development Status
-.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/argmatch.svg?style=flat
-    :target: https://pypi.python.org/pypi/argmatch
-    :alt: Python versions
-.. |License| image:: https://img.shields.io/pypi/l/argmatch.svg?style=flat
-    :target: https://github.com/Xion/argmatch/blob/master/LICENSE
-    :alt: License
-.. |Build Status| image:: https://img.shields.io/travis/Xion/argmatch.svg?style=flat
-    :target: https://travis-ci.org/Xion/argmatch
-    :alt: Build Status
+## More robust tests
 
-
-More robust tests
-~~~~~~~~~~~~~~~~~
-
-Python's `mocking library`_ (or its `backport`_ for Python <3.3) is simple, reliable, and easy to use.
+Python's [mocking library](https://docs.python.org/3/library/unittest.mock.html) (or its [backport](https://pypi.python.org/pypi/mock) for Python <3.3) is simple, reliable, and easy to use.
 But it is also a little lacking when it comes to asserting what calls a mock has received.
 
 You can be either very specific::
@@ -55,9 +41,6 @@ without tedious, handcrafted, and poorly readable code that checks ``call_args``
     self.assertIsInstance(mock.call_args[0][2], str)
 
 It has plenty of matcher types to fit all common and uncommon needs, and you can easily write your own if necessary.
-
-.. _mocking library: https://docs.python.org/3/library/unittest.mock.html
-.. _backport: https://pypi.python.org/pypi/mock
 
 
 Installation
