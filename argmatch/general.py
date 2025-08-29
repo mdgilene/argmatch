@@ -4,14 +4,18 @@ General matchers.
 These don't belong to any broader category, and include matchers for common
 Python objects, like functions or classes.
 """
+
 import inspect
 
-from callee._compat import IS_PY3, STRING_TYPES
-from callee.base import BaseMatcher
+from argmatch._compat import IS_PY3, STRING_TYPES
+from argmatch.base import BaseMatcher
 
 
 __all__ = [
-    'Any', 'Matching', 'ArgThat', 'Captor',
+    "Any",
+    "Matching",
+    "ArgThat",
+    "Captor",
 ]
 
 
@@ -45,8 +49,7 @@ class Matching(BaseMatcher):
                      on failed assertion.
         """
         if not callable(predicate):
-            raise TypeError(
-                "Matching requires a predicate, got %r" % (predicate,))
+            raise TypeError("Matching requires a predicate, got %r" % (predicate,))
 
         self.predicate = predicate
         self.desc = self._validate_desc(desc)
@@ -59,17 +62,19 @@ class Matching(BaseMatcher):
         if not isinstance(desc, STRING_TYPES):
             raise TypeError(
                 "predicate description for Matching must be a string, "
-                "got %r" % (type(desc),))
+                "got %r" % (type(desc),)
+            )
 
         # Python 2 mandates __repr__ to be an ASCII string,
         # so if Unicode is passed (usually due to unicode_literals),
         # it should be ASCII-encodable.
         if not IS_PY3 and isinstance(desc, unicode):
             try:
-                desc = desc.encode('ascii', errors='strict')
+                desc = desc.encode("ascii", errors="strict")
             except UnicodeEncodeError:
-                raise TypeError("predicate description must be "
-                                "an ASCII string in Python 2")
+                raise TypeError(
+                    "predicate description must be " "an ASCII string in Python 2"
+                )
 
         return desc
 
@@ -83,7 +88,7 @@ class Matching(BaseMatcher):
 
     def __repr__(self):
         """Return a representation of the matcher."""
-        name = getattr(self.predicate, '__name__', None)
+        name = getattr(self.predicate, "__name__", None)
         desc = self.desc
 
         # When no user-provided description is available,
@@ -91,21 +96,22 @@ class Matching(BaseMatcher):
         if desc is None:
             # If not a lambda function, we can probably make the representation
             # more readable by showing just the function's own name.
-            if name and name != '<lambda>':
+            if name and name != "<lambda>":
                 # Where possible, make it a fully qualified name, including
                 # the module path. This is either on Python 3.3+
                 # (via __qualname__), or when the predicate is
                 # a standalone function (not a method).
-                qualname = getattr(self.predicate, '__qualname__', name)
-                is_method = inspect.ismethod(self.predicate) or \
-                    isinstance(self.predicate, staticmethod)
+                qualname = getattr(self.predicate, "__qualname__", name)
+                is_method = inspect.ismethod(self.predicate) or isinstance(
+                    self.predicate, staticmethod
+                )
                 if qualname != name or not is_method:
                     # Note that this shows inner functions (those defined
                     # locally inside other functions) as if they were global
                     # to the module.
                     # This is why we use colon (:) as separator here, as to not
                     # suggest this is an evaluatable identifier.
-                    name = '%s:%s' % (self.predicate.__module__, qualname)
+                    name = "%s:%s" % (self.predicate.__module__, qualname)
             else:
                 # For lambdas and other callable objects,
                 # we'll just default to the Python repr().
@@ -113,11 +119,12 @@ class Matching(BaseMatcher):
         else:
             # Quote and possibly ellipsize the provided description.
             if len(desc) > self.MAX_DESC_LENGTH:
-                ellipsis = '...'
-                desc = desc[:self.MAX_DESC_LENGTH - len(ellipsis)] + ellipsis
+                ellipsis = "..."
+                desc = desc[: self.MAX_DESC_LENGTH - len(ellipsis)] + ellipsis
             desc = '"%s"' % desc
 
         return "<Matching %s>" % (desc or name or repr(self.predicate))
+
 
 ArgThat = Matching
 
@@ -139,7 +146,8 @@ class Captor(BaseMatcher):
 
     .. versionadded:: 0.2
     """
-    __slots__ = ('matcher', 'value')
+
+    __slots__ = ("matcher", "value")
 
     def __init__(self, matcher=None):
         """
@@ -158,7 +166,7 @@ class Captor(BaseMatcher):
 
     def has_value(self):
         """Returns whether the :class:`Captor` has captured a value."""
-        return hasattr(self, 'value')
+        return hasattr(self, "value")
 
     @property
     def arg(self):
@@ -178,5 +186,4 @@ class Captor(BaseMatcher):
 
     def __repr__(self):
         """Return a representation of the captor."""
-        return "<Captor %r%s>" % (self.matcher,
-                                  " (*)" if self.has_value() else "")
+        return "<Captor %r%s>" % (self.matcher, " (*)" if self.has_value() else "")

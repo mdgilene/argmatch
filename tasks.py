@@ -1,6 +1,7 @@
 """
 Automation tasks, aided by the Invoke package.
 """
+
 import logging
 import os
 import webbrowser
@@ -16,91 +17,101 @@ except NameError:
     pass  # Python 3, input() already works like raw_input() in 2.x.
 
 
-DOCS_DIR = 'docs'
-DOCS_OUTPUT_DIR = os.path.join(DOCS_DIR, '_build')
+DOCS_DIR = "docs"
+DOCS_OUTPUT_DIR = os.path.join(DOCS_DIR, "_build")
 
 
-@task(default=True, help={
-    'all': "Whether to run the tests on all environments (using tox)",
-    'verbose': "Whether to enable verbose output",
-})
+@task(
+    default=True,
+    help={
+        "all": "Whether to run the tests on all environments (using tox)",
+        "verbose": "Whether to enable verbose output",
+    },
+)
 def test(ctx, all=False, verbose=False):
     """Run the tests."""
-    cmd = 'tox' if all else 'py.test'
+    cmd = "tox" if all else "py.test"
     if verbose:
-        cmd += ' -v'
+        cmd += " -v"
     return ctx.run(cmd, pty=True).return_code
 
 
 @task
 def lint(ctx):
     """Run the linter."""
-    return ctx.run('flake8 callee tests', pty=True).return_code
+    return ctx.run("flake8 argmatch tests", pty=True).return_code
 
 
-@task(help={
-    'output': "Documentation output format to produce",
-    'rebuild': "Whether to rebuild the documentation from scratch",
-    'show': "Whether to show the docs in the browser (default: yes)",
-    'verbose': "Whether to enable verbose output",
-})
-def docs(ctx, output='html', rebuild=False, show=True, verbose=True):
+@task(
+    help={
+        "output": "Documentation output format to produce",
+        "rebuild": "Whether to rebuild the documentation from scratch",
+        "show": "Whether to show the docs in the browser (default: yes)",
+        "verbose": "Whether to enable verbose output",
+    }
+)
+def docs(ctx, output="html", rebuild=False, show=True, verbose=True):
     """Build the docs and show them in default web browser."""
     sphinx_build = ctx.run(
-        'sphinx-build -b {output} {all} {verbose} docs docs/_build'.format(
+        "sphinx-build -b {output} {all} {verbose} docs docs/_build".format(
             output=output,
-            all='-a -E' if rebuild else '',
-            verbose='-v' if verbose else ''))
+            all="-a -E" if rebuild else "",
+            verbose="-v" if verbose else "",
+        )
+    )
     if not sphinx_build.ok:
         fatal("Failed to build the docs", cause=sphinx_build)
 
     if show:
-        path = os.path.join(DOCS_OUTPUT_DIR, 'index.html')
-        if sys.platform == 'darwin':
-            path = 'file://%s' % os.path.abspath(path)
+        path = os.path.join(DOCS_OUTPUT_DIR, "index.html")
+        if sys.platform == "darwin":
+            path = "file://%s" % os.path.abspath(path)
         webbrowser.open_new_tab(path)
 
 
 # TODO: remove this when PyPI upload from Travis CI is verified to work
-@task(help={
-    'yes': "Whether to actually perform the upload. "
-           "By default, a confirmation is necessary.",
-})
+@task(
+    help={
+        "yes": "Whether to actually perform the upload. "
+        "By default, a confirmation is necessary.",
+    }
+)
 def upload(ctx, yes=False):
     """Upload the package to PyPI.
 
     This is done by adding a Git tag for the current non-dev version
     and pushing to GitHub, which triggers the Travis build & deploy pipeline.
     """
-    import callee
-    version = callee.__version__
+    import argmatch
+
+    version = argmatch.__version__
 
     # check the packages version
     # TODO: add a 'release' to automatically bless a version as release one
-    if version.endswith('-dev'):
+    if version.endswith("-dev"):
         fatal("Can't upload a development version (%s) to PyPI!", version)
 
     # run the upload if it has been confirmed by the user
     if not yes:
         answer = input("Do you really want to upload to PyPI [y/N]? ")
-        yes = answer.strip().lower() == 'y'
+        yes = answer.strip().lower() == "y"
     if not yes:
         logging.warning("Aborted -- not uploading to PyPI.")
         return -2
 
     # add a Git tag and push
     logging.debug("Tagging current HEAD as %s..." % version)
-    git_tag = ctx.run('git tag %s' % version)
+    git_tag = ctx.run("git tag %s" % version)
     if not git_tag.ok:
-        fatal("Failed to add a Git tag for uploaded version %s", version,
-              cause=git_tag)
-    git_push = ctx.run('git push && git push --tags')
+        fatal("Failed to add a Git tag for uploaded version %s", version, cause=git_tag)
+    git_push = ctx.run("git push && git push --tags")
     if not git_push.ok:
         fatal("Failed to push the release upstream.", cause=git_push)
     logging.info("New version (%s) successfully pushed." % version)
 
 
 # Utility functions
+
 
 def fatal(*args, **kwargs):
     """Log an error message and exit.
@@ -113,14 +124,15 @@ def fatal(*args, **kwargs):
     """
     # determine the exitcode to return to the operating system
     exitcode = None
-    if 'exitcode' in kwargs:
-        exitcode = kwargs.pop('exitcode')
-    if 'cause' in kwargs:
-        cause = kwargs.pop('cause')
+    if "exitcode" in kwargs:
+        exitcode = kwargs.pop("exitcode")
+    if "cause" in kwargs:
+        cause = kwargs.pop("cause")
         if not isinstance(cause, Result):
             raise TypeError(
-                "invalid cause of fatal error: expected %r, got %r" % (
-                    Result, type(cause)))
+                "invalid cause of fatal error: expected %r, got %r"
+                % (Result, type(cause))
+            )
         exitcode = exitcode or cause.return_code
 
     logging.error(*args, **kwargs)

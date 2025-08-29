@@ -1,6 +1,7 @@
 """
 Compatibility shims for different Python versions.
 """
+
 from __future__ import absolute_import
 
 try:
@@ -19,19 +20,20 @@ import sys
 
 
 __all__ = [
-    'asyncio',
-    'OrderedDict',
-    'IS_PY3',
-    'STRING_TYPES', 'casefold',
-    'metaclass',
-    'getargspec',
+    "asyncio",
+    "OrderedDict",
+    "IS_PY3",
+    "STRING_TYPES",
+    "casefold",
+    "metaclass",
+    "getargspec",
 ]
 
 
 IS_PY3 = sys.version_info[0] == 3
 
 STRING_TYPES = (str,) if IS_PY3 else (basestring,)
-casefold = getattr(str, 'casefold', None) or (lambda s: s.lower())
+casefold = getattr(str, "casefold", None) or (lambda s: s.lower())
 
 
 class MetaclassDecorator(object):
@@ -47,10 +49,12 @@ class MetaclassDecorator(object):
         class MyClass(object):
             pass
     """
+
     def __init__(self, meta):
         if not issubclass(meta, type):
             raise TypeError(
-                "expected a metaclass, got %s instead" % type(meta).__name__)
+                "expected a metaclass, got %s instead" % type(meta).__name__
+            )
         self.metaclass = meta
 
     def __call__(self, cls):
@@ -62,10 +66,10 @@ class MetaclassDecorator(object):
         # All rights reserved.
 
         original_dict = cls.__dict__.copy()
-        original_dict.pop('__dict__', None)
-        original_dict.pop('__weakref__', None)
+        original_dict.pop("__dict__", None)
+        original_dict.pop("__weakref__", None)
 
-        slots = original_dict.get('__slots__')
+        slots = original_dict.get("__slots__")
         if slots is not None:
             if isinstance(slots, str):
                 slots = [slots]
@@ -73,6 +77,7 @@ class MetaclassDecorator(object):
                 original_dict.pop(slot)
 
         return self.metaclass(cls.__name__, cls.__bases__, original_dict)
+
 
 metaclass = MetaclassDecorator
 del MetaclassDecorator
@@ -90,7 +95,7 @@ def getargspec(obj):
     parameters will be lost, as the original getargspec() doesn't honor it.
     """
     try:
-        return inspect.getargspec(obj)
+        return inspect.getfullargspec(obj)
     except AttributeError:
         pass  # we let a TypeError through
 

@@ -1,6 +1,7 @@
 """
 Test package.
 """
+
 import os
 import sys
 
@@ -9,16 +10,12 @@ try:
 except ImportError:
     import mock
 
-from taipan.testing import TestCase as _TestCase
+from unittest import TestCase as _TestCase
 
-from callee._compat import asyncio
+from argmatch._compat import asyncio
 
 
-__all__ = [
-    'IS_PY34', 'IS_PY35',
-    'MatcherTestCase',
-    'python_code'
-]
+__all__ = ["IS_PY34", "IS_PY35", "MatcherTestCase", "python_code"]
 
 
 IS_PY34 = sys.version_info >= (3, 4)
@@ -63,9 +60,11 @@ class MatcherTestCase(TestCase):
         for arg in args:
             arg_repr = "%r" % arg
             self.assertIn(
-                arg_repr, repr_,
-                msg="%s (repr of %s) didn't contain expected value %s" % (
-                    repr_, matcher.__class__.__name__, arg_repr))
+                arg_repr,
+                repr_,
+                msg="%s (repr of %s) didn't contain expected value %s"
+                % (repr_, matcher.__class__.__name__, arg_repr),
+            )
 
     def await_(self, coroutine):
         """Run given asynchronous coroutine to completion.
@@ -74,8 +73,8 @@ class MatcherTestCase(TestCase):
         :param coroutine: A coroutine or a coroutine function
         """
         self.assertIsNotNone(
-            asyncio,
-            msg="Tried to use asyncio on unsupported Python version")
+            asyncio, msg="Tried to use asyncio on unsupported Python version"
+        )
 
         loop = asyncio.new_event_loop()
         if asyncio.iscoroutinefunction(coroutine):
@@ -87,6 +86,7 @@ class MatcherTestCase(TestCase):
 
 
 # Utility functions
+
 
 def python_code(source):
     """Format Python source code, given as a string, for use with ``exec``.
@@ -118,6 +118,6 @@ def python_code(source):
 
     # ensure there is an empty line at the end
     if lines and lines[-1]:
-        lines.append('')
+        lines.append("")
 
     return os.linesep.join(lines)

@@ -1,14 +1,18 @@
 """
 Matchers related to functions and other similar callables.
 """
+
 import inspect
 
-from callee._compat import asyncio
-from callee.base import BaseMatcher
+from argmatch._compat import asyncio
+from argmatch.base import BaseMatcher
 
 
 __all__ = [
-    'Callable', 'Function', 'GeneratorFunction', 'CoroutineFunction',
+    "Callable",
+    "Function",
+    "GeneratorFunction",
+    "CoroutineFunction",
 ]
 
 
@@ -16,6 +20,7 @@ class FunctionMatcher(BaseMatcher):
     """Matches values of callable types.
     This class shouldn't be used directly.
     """
+
     def __repr__(self):
         return "<%s>" % (self.__class__.__name__,)
 
@@ -42,9 +47,10 @@ class GeneratorFunction(FunctionMatcher):
         This is distinct from matching a *generator*,
         i.e. an iterable result of calling the generator function,
         or a generator comprehension (``(... for x in ...)``).
-        The :class:`~callee.collections.Generator` matcher
+        The :class:`~argmatch.collections.Generator` matcher
         should be used for those objects instead.
     """
+
     def match(self, value):
         return inspect.isgeneratorfunction(value)
 
@@ -58,5 +64,6 @@ class CoroutineFunction(FunctionMatcher):
     These are only available in Python 3.4 and above.
     On previous versions of Python, no object will match this matcher.
     """
+
     def match(self, value):
         return asyncio and asyncio.iscoroutinefunction(value)

@@ -1,14 +1,18 @@
 """
 Attribute-based matchers.
 """
+
 from itertools import starmap
 from operator import itemgetter
 
-from callee.base import BaseMatcher, Eq
+from argmatch.base import BaseMatcher, Eq
 
 
 __all__ = [
-    'Attrs', 'Attr', 'HasAttrs', 'HasAttr',
+    "Attrs",
+    "Attr",
+    "HasAttrs",
+    "HasAttr",
 ]
 
 
@@ -30,14 +34,17 @@ class Attrs(BaseMatcher):
         Attrs(bar=Integer())  # `bar` attribute whose value is an integer
         Attrs('foo', bar='x')  # `foo` with any value, `bar` with value of 'x'
     """
+
     def __init__(self, *args, **kwargs):
         if not (args or kwargs):
-            raise TypeError("%s() requires at least one argument" % (
-                self.__class__.__name__,))
+            raise TypeError(
+                "%s() requires at least one argument" % (self.__class__.__name__,)
+            )
 
         self.attr_names = list(args)
-        self.attr_dict = dict((k, v if isinstance(v, BaseMatcher) else Eq(v))
-                              for k, v in kwargs.items())
+        self.attr_dict = dict(
+            (k, v if isinstance(v, BaseMatcher) else Eq(v)) for k, v in kwargs.items()
+        )
 
     def match(self, value):
         for name in self.attr_names:
@@ -66,8 +73,9 @@ class Attrs(BaseMatcher):
         """Return a representation of the matcher."""
         # get both the names-only and valued attributes and sort them by name
         sentinel = object()
-        attrs = [(name, sentinel)
-                 for name in self.attr_names] + list(self.attr_dict.items())
+        attrs = [(name, sentinel) for name in self.attr_names] + list(
+            self.attr_dict.items()
+        )
         attrs.sort(key=itemgetter(0))
 
         def attr_repr(name, value):
@@ -77,14 +85,17 @@ class Attrs(BaseMatcher):
             value = value.value if isinstance(value, Eq) else value
             return "%s=%r" % (name, value)
 
-        return "<%s %s>" % (self.__class__.__name__,
-                            " ".join(starmap(attr_repr, attrs)))
+        return "<%s %s>" % (
+            self.__class__.__name__,
+            " ".join(starmap(attr_repr, attrs)),
+        )
 
 
 class Attr(Attrs):
     """Matches objects that have an attribute with given name and value,
     as given by a keyword argument.
     """
+
     def __init__(self, **kwargs):
         if not len(kwargs) == 1:
             raise TypeError("Attr() requires exactly one keyword argument")
@@ -95,6 +106,7 @@ class HasAttrs(Attrs):
     """Matches objects that have all of the specified attribute names,
     regardless of their values.
     """
+
     def __init__(self, *args):
         super(HasAttrs, self).__init__(*args)
 
@@ -103,5 +115,6 @@ class HasAttr(HasAttrs):
     """Matches object that have an attribute with given name,
     regardless of its value.
     """
+
     def __init__(self, name):
         super(HasAttr, self).__init__(name)

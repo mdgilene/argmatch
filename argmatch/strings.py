@@ -1,28 +1,34 @@
 """
 Matchers for strings.
 """
+
 import fnmatch
 import re
 
-from callee._compat import IS_PY3, casefold
-from callee.base import BaseMatcher
-from callee.objects import Bytes
+from argmatch._compat import IS_PY3, casefold
+from argmatch.base import BaseMatcher
+from argmatch.objects import Bytes
 
 
 __all__ = [
-    'Bytes',  # backwards compatibility
-    'String', 'Unicode',
-    'StartsWith', 'EndsWith',
-    'Glob', 'Regex',
+    "Bytes",  # backwards compatibility
+    "String",
+    "Unicode",
+    "StartsWith",
+    "EndsWith",
+    "Glob",
+    "Regex",
 ]
 
 
 # String type matchers
 
+
 class StringTypeMatcher(BaseMatcher):
     """Matches some string type.
     This class shouldn't be used directly.
     """
+
     #: String class to match.
     #: Must be overridden in subclasses.
     CLASS = None
@@ -46,6 +52,7 @@ class String(StringTypeMatcher):
     | On Python 2, this means either :class:`str` or :class:`unicode` objects.
     | On Python 3, this means :class:`str` objects exclusively.
     """
+
     CLASS = str if IS_PY3 else basestring
 
 
@@ -55,12 +62,14 @@ class Unicode(StringTypeMatcher):
     | On Python 2, this means :class:`unicode` objects exclusively.
     | On Python 3, this means :class:`str` objects exclusively.
     """
+
     CLASS = str if IS_PY3 else unicode
 
 
 # Infix matchers
 
 # TODO: generalize for all sequence/collection types
+
 
 class StartsWith(BaseMatcher):
     """Matches a string starting with given prefix."""
@@ -90,12 +99,14 @@ class EndsWith(BaseMatcher):
 
 # Pattern matchers
 
+
 class Glob(BaseMatcher):
     """Matches a string against a Unix shell wildcard pattern.
 
     See the :mod:`fnmatch` module for more details about those patterns.
     """
-    DEFAULT_CASE = 'system'
+
+    DEFAULT_CASE = "system"
 
     #: fnmatch functions that the matchers uses based on case= argument.
     FNMATCH_FUNCTIONS = {
@@ -134,7 +145,7 @@ class Glob(BaseMatcher):
 class Regex(BaseMatcher):
     """Matches a string against a regular expression."""
 
-    REGEX_TYPE = type(re.compile(''))
+    REGEX_TYPE = type(re.compile(""))
 
     def __init__(self, pattern, flags=0):
         """
@@ -145,8 +156,10 @@ class Regex(BaseMatcher):
         """
         if self._is_regex_object(pattern):
             if flags and flags != pattern.flags:
-                raise ValueError("conflicting regex flags: %s vs. %s" % (
-                    bin(flags), bin(pattern.flags)))
+                raise ValueError(
+                    "conflicting regex flags: %s vs. %s"
+                    % (bin(flags), bin(pattern.flags))
+                )
         else:
             pattern = re.compile(pattern, flags)
 

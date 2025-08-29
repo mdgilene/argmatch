@@ -1,13 +1,19 @@
 """
 Type-related matchers.
 """
+
 import inspect
 
-from callee.base import BaseMatcher
+from argmatch.base import BaseMatcher
 
 
 __all__ = [
-    'InstanceOf', 'IsA', 'SubclassOf', 'Inherits', 'Type', 'Class',
+    "InstanceOf",
+    "IsA",
+    "SubclassOf",
+    "Inherits",
+    "Type",
+    "Class",
 ]
 
 
@@ -15,11 +21,13 @@ class TypeMatcher(BaseMatcher):
     """Matches an object to a type.
     This class shouldn't be used directly.
     """
+
     def __init__(self, type_):
         """:param type\ _: Type to match against"""
         if not isinstance(type_, type):
-            raise TypeError("%s requires a type, got %r" % (
-                self.__class__.__name__, type_))
+            raise TypeError(
+                "%s requires a type, got %r" % (self.__class__.__name__, type_)
+            )
         self.type_ = type_
 
     def __repr__(self):
@@ -31,6 +39,7 @@ class InstanceOf(TypeMatcher):
     """Matches an object that's an instance of given type
     (as per `isinstance`).
     """
+
     def __init__(self, type_, exact=False):
         """
         :param type\ _: Type to match against
@@ -49,6 +58,7 @@ class InstanceOf(TypeMatcher):
         else:
             return isinstance(value, self.type_)
 
+
 IsA = InstanceOf
 
 
@@ -57,6 +67,7 @@ class SubclassOf(TypeMatcher):
     """Matches a class that's a subclass of given type
     (as per `issubclass`).
     """
+
     def __init__(self, type_, strict=False):
         """
         :param type\ _: Type to match against
@@ -77,6 +88,7 @@ class SubclassOf(TypeMatcher):
         if value is self.type_ and self.strict:
             return False
         return True
+
 
 Inherits = SubclassOf
 

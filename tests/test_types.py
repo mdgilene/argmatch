@@ -1,7 +1,8 @@
 """
 Tests for type-related matchers.
 """
-import callee.types as __unit__
+
+import argmatch.types as __unit__
 from tests import MatcherTestCase
 
 
@@ -46,12 +47,14 @@ class InstanceOf(MatcherTestCase):
         pass
 
     def assert_match(self, value, type_, exact=False):
-        return super(InstanceOf, self) \
-            .assert_match(__unit__.InstanceOf(type_, exact), value)
+        return super(InstanceOf, self).assert_match(
+            __unit__.InstanceOf(type_, exact), value
+        )
 
     def assert_no_match(self, value, type_, exact=False):
-        return super(InstanceOf, self) \
-            .assert_no_match(__unit__.InstanceOf(type_, exact), value)
+        return super(InstanceOf, self).assert_no_match(
+            __unit__.InstanceOf(type_, exact), value
+        )
 
 
 class SubclassOf(MatcherTestCase):
@@ -94,9 +97,11 @@ class SubclassOf(MatcherTestCase):
         pass
 
     def assert_match(self, value, type_, strict=False):
-        return super(SubclassOf, self) \
-            .assert_match(__unit__.SubclassOf(type_, strict), value)
+        return super(SubclassOf, self).assert_match(
+            __unit__.SubclassOf(type_, strict), value
+        )
 
     def assert_no_match(self, value, type_, strict=False):
-        return super(SubclassOf, self) \
-            .assert_no_match(__unit__.SubclassOf(type_, strict), value)
+        return super(SubclassOf, self).assert_no_match(
+            __unit__.SubclassOf(type_, strict), value
+        )

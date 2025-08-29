@@ -1,16 +1,24 @@
 """
 Base classes for argument matchers.
 """
+
 import inspect
 from operator import itemgetter
 
-from callee._compat import IS_PY3, metaclass
+from argmatch._compat import IS_PY3, metaclass
 
 
 __all__ = [
-    'Matcher',
-    'Eq', 'Is', 'IsNot',
-    'Not', 'And', 'Or', 'Either', 'OneOf', 'Xor',
+    "Matcher",
+    "Eq",
+    "Is",
+    "IsNot",
+    "Not",
+    "And",
+    "Or",
+    "Either",
+    "OneOf",
+    "Xor",
 ]
 
 
@@ -26,13 +34,12 @@ class BaseMatcherMetaclass(type):
     #
     #: The names are given without the leading or trailing underscores.
     #:
-    USER_OVERRIDABLE_MAGIC_METHODS = ('init', 'repr')
+    USER_OVERRIDABLE_MAGIC_METHODS = ("init", "repr")
 
     def __new__(meta, classname, bases, dict_):
         """Create a new matcher class."""
         meta._validate_class_definition(classname, bases, dict_)
-        return super(BaseMatcherMetaclass, meta) \
-            .__new__(meta, classname, bases, dict_)
+        return super(BaseMatcherMetaclass, meta).__new__(meta, classname, bases, dict_)
 
     @classmethod
     def _validate_class_definition(meta, classname, bases, dict_):
@@ -45,7 +52,7 @@ class BaseMatcherMetaclass(type):
 
         # ensure that no important magic methods are being overridden
         for name, member in dict_.items():
-            if not (name.startswith('__') and name.endswith('__')):
+            if not (name.startswith("__") and name.endswith("__")):
                 continue
 
             # check if it's not a whitelisted magic method name
@@ -67,15 +74,15 @@ class BaseMatcherMetaclass(type):
                 continue
 
             raise RuntimeError(
-                "matcher class %s cannot override the __%s__ method" % (
-                    classname, name))
+                "matcher class %s cannot override the __%s__ method" % (classname, name)
+            )
 
     @classmethod
     def _is_base_matcher_class_definition(meta, classname, dict_):
         """Checks whether given class name and dictionary
         define the :class:`BaseMatcher`.
         """
-        if classname != 'BaseMatcher':
+        if classname != "BaseMatcher":
             return False
         methods = list(filter(inspect.isfunction, dict_.values()))
         return methods and all(m.__module__ == __name__ for m in methods)
@@ -86,8 +93,11 @@ class BaseMatcherMetaclass(type):
         :return: Iterable of magic methods, each w/o the ``__`` prefix/suffix
         """
         return [
-            name[2:-2] for name, member in class_.__dict__.items()
-            if len(name) > 4 and name.startswith('__') and name.endswith('__')
+            name[2:-2]
+            for name, member in class_.__dict__.items()
+            if len(name) > 4
+            and name.startswith("__")
+            and name.endswith("__")
             and inspect.isfunction(member)
         ]
 
@@ -104,6 +114,7 @@ class BaseMatcher(object):
     This class shouldn't be used directly by the clients.
     To create custom matchers, inherit from :class:`Matcher` instead.
     """
+
     __slots__ = ()
 
     def match(self, value):
@@ -114,8 +125,7 @@ class BaseMatcher(object):
 
     def __eq__(self, other):
         if isinstance(other, BaseMatcher):
-            raise TypeError(
-                "incorrect use of matcher object as a value to match on")
+            raise TypeError("incorrect use of matcher object as a value to match on")
         return self.match(other)
 
     # TODO: make matcher objects callable
@@ -146,6 +156,7 @@ class Matcher(BaseMatcher):
     you may also  want to provide a :meth:`__repr__` method implementation
     for better error messages.
     """
+
     def __repr__(self):
         """Provides a default ``repr``\ esentation for custom matchers.
 
@@ -157,31 +168,36 @@ class Matcher(BaseMatcher):
 
         # check if the matcher class has a parametrized constructor
         has_argful_ctor = False
-        if '__init__' in self.__class__.__dict__:
-            argnames, vargargs, kwargs, _ = inspect.getargspec(
-                self.__class__.__init__)
+        if "__init__" in self.__class__.__dict__:
+            argnames, vargargs, kwargs, *_ = inspect.getfullargspec(
+                self.__class__.__init__
+            )
             has_argful_ctor = bool(argnames[1:] or vargargs or kwargs)
 
         # if so, then it probably means it has some interesting state
         # in its attributes which we can include in the default representation
         if has_argful_ctor:
             # TODO: __getstate__ instead of __dict__?
-            fields = [(name, value) for name, value in self.__dict__.items()
-                      if not name.startswith('_')]
+            fields = [
+                (name, value)
+                for name, value in self.__dict__.items()
+                if not name.startswith("_")
+            ]
             if fields:
+
                 def repr_value(value):
                     """Safely represent a value as an ASCII string."""
                     if isinstance(value, bytes):
-                        value = value.decode('ascii', 'ignore')
+                        value = value.decode("ascii", "ignore")
                     if not IS_PY3 and isinstance(value, unicode):
-                        value = value.encode('ascii', 'replace')
+                        value = value.encode("ascii", "replace")
                         value = str(value)
                     return repr(value)
 
                 fields.sort(key=itemgetter(0))
                 args = "(%s)" % ", ".join(
-                    "%s=%s" % (name, repr_value(value)[:32])
-                    for name, value in fields)
+                    "%s=%s" % (name, repr_value(value)[:32]) for name, value in fields
+                )
             else:
                 args = "(...)"
 
@@ -189,6 +205,7 @@ class Matcher(BaseMatcher):
 
 
 # Special cases around equality/identity
+
 
 class Eq(BaseMatcher):
     """Matches a value exactly using the equality (``==``) operator.
@@ -200,12 +217,13 @@ class Eq(BaseMatcher):
         mock_foo.assert_called_with(Eq(bar))  # equivalent
 
     In very rare and specialized cases, however, if the **tested code** treats
-    `callee` matcher objects in some special way, using :class:`Eq` may be
+    `argmatch` matcher objects in some special way, using :class:`Eq` may be
     necessary.
 
     Those situations shouldn't generally arise outside of writing tests
     for code that is itself a test library or helper.
     """
+
     def __init__(self, value):
         """:param value: Value to match against"""
         self.value = value
@@ -260,11 +278,13 @@ class IsNot(BaseMatcher):
 
 # Logical combinators for matchers
 
+
 class Not(BaseMatcher):
     """Negates given matcher.
 
     :param matcher: Matcher object to negate the semantics of
     """
+
     def __init__(self, matcher):
         assert isinstance(matcher, BaseMatcher), "Not() expects a matcher"
         self._matcher = matcher
@@ -298,8 +318,9 @@ class And(BaseMatcher):
 
     def __init__(self, *matchers):
         assert matchers, "And() expects at least one matcher"
-        assert all(isinstance(m, BaseMatcher)
-                   for m in matchers), "And() expects matchers"
+        assert all(
+            isinstance(m, BaseMatcher) for m in matchers
+        ), "And() expects matchers"
         self._matchers = list(matchers)
 
     # TODO: coalesce a & b & c into single And(a, b, c)
@@ -316,8 +337,9 @@ class Or(BaseMatcher):
 
     def __init__(self, *matchers):
         assert matchers, "Or() expects at least one matcher"
-        assert all(isinstance(m, BaseMatcher)
-                   for m in matchers), "Or() expects matchers"
+        assert all(
+            isinstance(m, BaseMatcher) for m in matchers
+        ), "Or() expects matchers"
         self._matchers = list(matchers)
 
     # TODO: coalesce a | b | c into single Or(a, b, c)
@@ -334,10 +356,12 @@ class Either(BaseMatcher):
 
     .. versionadded:: 0.3
     """
+
     def __init__(self, *matchers):
         assert len(matchers) >= 2, "Either() expects at least two matchers"
-        assert all(isinstance(m, BaseMatcher)
-                   for m in matchers), "Either() expects matchers"
+        assert all(
+            isinstance(m, BaseMatcher) for m in matchers
+        ), "Either() expects matchers"
         self._matchers = list(matchers)
 
     def match(self, value):
@@ -351,6 +375,7 @@ class Either(BaseMatcher):
 
     def __repr__(self):
         return "<%s>" % " xor ".join(map(repr, self._matchers))
+
 
 #: Alias for :class:`Either`.
 OneOf = Either

@@ -1,19 +1,27 @@
 """
 Matchers for numbers.
 """
+
 from __future__ import absolute_import
 
 import fractions
 import numbers
 
-from callee._compat import IS_PY3
-from callee.base import BaseMatcher
+from argmatch._compat import IS_PY3
+from argmatch.base import BaseMatcher
 
 
 __all__ = [
-    'Number',
-    'Complex', 'Real', 'Float', 'Rational', 'Fraction',
-    'Integral', 'Integer', 'Int', 'Long',
+    "Number",
+    "Complex",
+    "Real",
+    "Float",
+    "Rational",
+    "Fraction",
+    "Integral",
+    "Integer",
+    "Int",
+    "Long",
 ]
 
 
@@ -21,6 +29,7 @@ class NumericMatcher(BaseMatcher):
     """Matches some number type.
     This class shouldn't be used directly.
     """
+
     #: Number class to match.
     #: Must be overridden in subclasses.
     CLASS = None
@@ -39,6 +48,7 @@ class Number(NumericMatcher):
     """Matches any number
     (integer, float, complex, custom number types, etc.).
     """
+
     CLASS = numbers.Number
 
 
@@ -48,6 +58,7 @@ class Complex(NumericMatcher):
     This *includes* all real, rational, and integer numbers as well,
     which in Python translates to `float`\ s, fractions, and `int`\ egers.
     """
+
     CLASS = numbers.Complex
 
 
@@ -62,6 +73,7 @@ class Real(NumericMatcher):
     This includes all rational and integer numbers as well, which in Python
     translates to fractions, and `int`\ egers.
     """
+
     CLASS = numbers.Real
 
 
@@ -75,6 +87,7 @@ class Rational(NumericMatcher):
     """Matches a rational number.
     This includes all `int`\ eger numbers as well.
     """
+
     CLASS = numbers.Rational
 
 
@@ -88,6 +101,7 @@ class Integral(NumericMatcher):
     """Matches any integer.
     This ignores the length of integer's internal representation on Python 2.
     """
+
     CLASS = int if IS_PY3 else (int, long)
 
 
@@ -99,7 +113,9 @@ class Integer(NumericMatcher):
 
     On Python 2, this matches the :class:`int` integers exclusively.
     """
+
     CLASS = int
+
 
 #: Alias for :class:`Integer`.
 Int = Integer
@@ -113,4 +129,5 @@ class Long(NumericMatcher):
 
     On Python 2, this matches the :class:`long` integers exclusively.
     """
+
     CLASS = int if IS_PY3 else long

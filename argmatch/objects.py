@@ -1,20 +1,22 @@
 """
 Matchers for various common kinds of objects.
 """
+
 import inspect
 import sys
 
-from callee._compat import asyncio, getargspec
-from callee.base import BaseMatcher
+from argmatch._compat import asyncio, getargspec
+from argmatch.base import BaseMatcher
 
 
-__all__ = ['Bytes', 'Coroutine', 'FileLike']
+__all__ = ["Bytes", "Coroutine", "FileLike"]
 
 
 class ObjectMatcher(BaseMatcher):
     """Base class for object matchers.
     This class shouldn't be used directly.
     """
+
     def __repr__(self):
         return "<%s>" % (self.__class__.__name__,)
 
@@ -29,6 +31,7 @@ class Bytes(ObjectMatcher):
     | On Python 2, :class:`bytes` class is identical to :class:`str` class.
     | On Python 3, byte strings are separate class, distinct from :class:`str`.
     """
+
     def match(self, value):
         return isinstance(value, bytes)
 
@@ -43,6 +46,7 @@ class Coroutine(ObjectMatcher):
     These are only available in Python 3.4 and above.
     On previous versions of Python, no object will match this matcher.
     """
+
     def match(self, value):
         return asyncio and asyncio.iscoroutine(value)
 
@@ -53,6 +57,7 @@ class FileLike(ObjectMatcher):
     In general, a `file-like object` is an object you can ``read`` data from,
     or ``write`` data to.
     """
+
     def __init__(self, read=True, write=None):
         """
         :param read:
@@ -68,8 +73,10 @@ class FileLike(ObjectMatcher):
             If ``None`` is passed, writing capability is not matched against.
         """
         if read is None and write is None:
-            raise ValueError("cannot match file-like objects "
-                             "that are neither readable nor writable")
+            raise ValueError(
+                "cannot match file-like objects "
+                "that are neither readable nor writable"
+            )
         self.read = read if read is None else bool(read)
         self.write = write if write is None else bool(write)
 
@@ -85,7 +92,7 @@ class FileLike(ObjectMatcher):
     def _is_readable(self, obj):
         """Check if the argument is a readable file-like object."""
         try:
-            read = getattr(obj, 'read')
+            read = getattr(obj, "read")
         except AttributeError:
             return False
         else:
@@ -94,7 +101,7 @@ class FileLike(ObjectMatcher):
     def _is_writable(self, obj):
         """Check if the argument is a writable file-like object."""
         try:
-            write = getattr(obj, 'write')
+            write = getattr(obj, "write")
         except AttributeError:
             return False
         else:
@@ -112,6 +119,7 @@ class FileLike(ObjectMatcher):
 
 # Utility functions
 
+
 def is_method(arg, min_arity=None, max_arity=None):
     """Check if argument is a method.
 
@@ -121,13 +129,14 @@ def is_method(arg, min_arity=None, max_arity=None):
     if not callable(arg):
         return False
 
-    if not any(is_(arg) for is_ in (inspect.ismethod,
-                                    inspect.ismethoddescriptor,
-                                    inspect.isbuiltin)):
+    if not any(
+        is_(arg)
+        for is_ in (inspect.ismethod, inspect.ismethoddescriptor, inspect.isbuiltin)
+    ):
         return False
 
     try:
-        argnames, varargs, kwargs, defaults = getargspec(arg)
+        argnames, varargs, kwargs, defaults, *_ = getargspec(arg)
     except TypeError:
         # On CPython 2.x, built-in methods of file aren't inspectable,
         # so if it's file.read() or file.write(), we can't tell it for sure.
@@ -135,14 +144,17 @@ def is_method(arg, min_arity=None, max_arity=None):
         # all we can do here.
         return True
     else:
-        if argnames and argnames[0] == 'self':
+        if argnames and argnames[0] == "self":
             argnames = argnames[1:]
 
     if min_arity is not None:
         actual_min_arity = len(argnames) - len(defaults or ())
-        assert actual_min_arity >= 0, (
-            "Minimum arity of %r found to be negative (got %s)!" % (
-                arg, actual_min_arity))
+        assert (
+            actual_min_arity >= 0
+        ), "Minimum arity of %r found to be negative (got %s)!" % (
+            arg,
+            actual_min_arity,
+        )
         if int(min_arity) != actual_min_arity:
             return False
 

@@ -1,9 +1,10 @@
 """
 Tests for operators' matchers.
 """
+
 from itertools import chain, combinations
 
-import callee.operators as __unit__
+import argmatch.operators as __unit__
 from tests import MatcherTestCase
 
 
@@ -15,12 +16,16 @@ class OperatorTestCase(MatcherTestCase):
         max_subset_size = len(s)
         if not strict:
             max_subset_size += 1
-        return set(map(frozenset,
-                       chain.from_iterable(combinations(s, n)
-                                           for n in range(max_subset_size))))
+        return set(
+            map(
+                frozenset,
+                chain.from_iterable(combinations(s, n) for n in range(max_subset_size)),
+            )
+        )
 
 
 # Simple comparisons
+
 
 class Less(OperatorTestCase):
 
@@ -101,12 +106,12 @@ class LessOrEqual(OperatorTestCase):
     # Assertion functions
 
     def assert_match(self, value, ref):
-        return super(LessOrEqual, self) \
-            .assert_match(__unit__.LessOrEqual(ref), value)
+        return super(LessOrEqual, self).assert_match(__unit__.LessOrEqual(ref), value)
 
     def assert_no_match(self, value, ref):
-        return super(LessOrEqual, self) \
-            .assert_no_match(__unit__.LessOrEqual(ref), value)
+        return super(LessOrEqual, self).assert_no_match(
+            __unit__.LessOrEqual(ref), value
+        )
 
 
 class Greater(OperatorTestCase):
@@ -148,8 +153,7 @@ class Greater(OperatorTestCase):
         return super(Greater, self).assert_match(__unit__.Greater(ref), value)
 
     def assert_no_match(self, value, ref):
-        return super(Greater, self) \
-            .assert_no_match(__unit__.Greater(ref), value)
+        return super(Greater, self).assert_no_match(__unit__.Greater(ref), value)
 
 
 class GreaterOrEqual(OperatorTestCase):
@@ -189,15 +193,18 @@ class GreaterOrEqual(OperatorTestCase):
     # Assertion functions
 
     def assert_match(self, value, ref):
-        return super(GreaterOrEqual, self) \
-            .assert_match(__unit__.GreaterOrEqual(ref), value)
+        return super(GreaterOrEqual, self).assert_match(
+            __unit__.GreaterOrEqual(ref), value
+        )
 
     def assert_no_match(self, value, ref):
-        return super(GreaterOrEqual, self) \
-            .assert_no_match(__unit__.GreaterOrEqual(ref), value)
+        return super(GreaterOrEqual, self).assert_no_match(
+            __unit__.GreaterOrEqual(ref), value
+        )
 
 
 # Length comparisons
+
 
 class Shorter(OperatorTestCase):
 
@@ -209,7 +216,7 @@ class Shorter(OperatorTestCase):
         self.assert_match("Alice", ref)
 
         self.assert_no_match(range(ref), ref)
-        self.assert_no_match('x' * ref, ref)
+        self.assert_no_match("x" * ref, ref)
         self.assert_no_match("Alice has a cat", ref)
 
     def test_sequence(self):
@@ -230,8 +237,7 @@ class Shorter(OperatorTestCase):
         return super(Shorter, self).assert_match(__unit__.Shorter(ref), value)
 
     def assert_no_match(self, value, ref):
-        return super(Shorter, self) \
-            .assert_no_match(__unit__.Shorter(ref), value)
+        return super(Shorter, self).assert_no_match(__unit__.Shorter(ref), value)
 
 
 class ShorterOrEqual(OperatorTestCase):
@@ -243,9 +249,9 @@ class ShorterOrEqual(OperatorTestCase):
         self.assert_match([1], ref)
         self.assert_match("Alice", ref)
         self.assert_match(range(ref), ref)
-        self.assert_match('x' * ref, ref)
+        self.assert_match("x" * ref, ref)
 
-        self.assert_no_match('x' * (ref + 1), ref)
+        self.assert_no_match("x" * (ref + 1), ref)
         self.assert_no_match("Alice has a cat", ref)
 
     def test_sequence(self):
@@ -262,12 +268,14 @@ class ShorterOrEqual(OperatorTestCase):
     # Assertion functions
 
     def assert_match(self, value, ref):
-        return super(ShorterOrEqual, self) \
-            .assert_match(__unit__.ShorterOrEqual(ref), value)
+        return super(ShorterOrEqual, self).assert_match(
+            __unit__.ShorterOrEqual(ref), value
+        )
 
     def assert_no_match(self, value, ref):
-        return super(ShorterOrEqual, self) \
-            .assert_no_match(__unit__.ShorterOrEqual(ref), value)
+        return super(ShorterOrEqual, self).assert_no_match(
+            __unit__.ShorterOrEqual(ref), value
+        )
 
 
 class Longer(OperatorTestCase):
@@ -275,14 +283,14 @@ class Longer(OperatorTestCase):
     def test_length_value(self):
         ref = 12
 
-        self.assert_match('x' * (ref + 1), ref)
+        self.assert_match("x" * (ref + 1), ref)
         self.assert_match("Alice has a cat", ref)
 
         self.assert_no_match([], ref)
         self.assert_no_match([1], ref)
         self.assert_no_match("Alice", ref)
         self.assert_no_match(range(ref), ref)
-        self.assert_no_match('x' * ref, ref)
+        self.assert_no_match("x" * ref, ref)
 
     def test_sequence(self):
         ref = [1, 2, 3]
@@ -302,8 +310,7 @@ class Longer(OperatorTestCase):
         return super(Longer, self).assert_match(__unit__.Longer(ref), value)
 
     def assert_no_match(self, value, ref):
-        return super(Longer, self) \
-            .assert_no_match(__unit__.Longer(ref), value)
+        return super(Longer, self).assert_no_match(__unit__.Longer(ref), value)
 
 
 class LongerOrEqual(OperatorTestCase):
@@ -311,10 +318,10 @@ class LongerOrEqual(OperatorTestCase):
     def test_length_value(self):
         ref = 12
 
-        self.assert_match('x' * (ref + 1), ref)
+        self.assert_match("x" * (ref + 1), ref)
         self.assert_match("Alice has a cat", ref)
         self.assert_match(range(ref), ref)
-        self.assert_match('x' * ref, ref)
+        self.assert_match("x" * ref, ref)
 
         self.assert_no_match([], ref)
         self.assert_no_match([1], ref)
@@ -336,15 +343,18 @@ class LongerOrEqual(OperatorTestCase):
     # Assertion functions
 
     def assert_match(self, value, ref):
-        return super(LongerOrEqual, self) \
-            .assert_match(__unit__.LongerOrEqual(ref), value)
+        return super(LongerOrEqual, self).assert_match(
+            __unit__.LongerOrEqual(ref), value
+        )
 
     def assert_no_match(self, value, ref):
-        return super(LongerOrEqual, self) \
-            .assert_no_match(__unit__.LongerOrEqual(ref), value)
+        return super(LongerOrEqual, self).assert_no_match(
+            __unit__.LongerOrEqual(ref), value
+        )
 
 
 # Membership tests
+
 
 class Contains(OperatorTestCase):
 
@@ -359,12 +369,12 @@ class Contains(OperatorTestCase):
         self.assert_match(list(range(ref + 1)), ref)
 
     def test_strings(self):
-        ref = 'x'
+        ref = "x"
 
-        self.assert_no_match('', ref)
+        self.assert_no_match("", ref)
 
         self.assert_match(ref, ref)
-        self.assert_match(ref + 'foo', ref)
+        self.assert_match(ref + "foo", ref)
 
     def test_sets(self):
         ref = 42
@@ -381,12 +391,10 @@ class Contains(OperatorTestCase):
     # Assertion functions
 
     def assert_match(self, value, ref):
-        return super(Contains, self) \
-            .assert_match(__unit__.Contains(ref), value)
+        return super(Contains, self).assert_match(__unit__.Contains(ref), value)
 
     def assert_no_match(self, value, ref):
-        return super(Contains, self) \
-            .assert_no_match(__unit__.Contains(ref), value)
+        return super(Contains, self).assert_no_match(__unit__.Contains(ref), value)
 
 
 class In(OperatorTestCase):
@@ -403,9 +411,9 @@ class In(OperatorTestCase):
             self.assert_match(num, ref)
 
     def test_string(self):
-        ref = 'Alice has a cat'
+        ref = "Alice has a cat"
 
-        self.assert_no_match('_', ref)
+        self.assert_no_match("_", ref)
         with self.assertRaises(TypeError):
             self.assert_no_match(42, ref)
         with self.assertRaises(TypeError):

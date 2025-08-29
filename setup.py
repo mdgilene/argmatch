@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-callee
+argmatch
 ======
 
 {description}
@@ -12,6 +12,7 @@ import sys
 
 
 # Utility functions
+
 
 def read_tags(filename):
     """Reads values of "magic tags" defined in the given Python file.
@@ -30,7 +31,7 @@ def read_tags(filename):
         target = node.targets[0]
         if type(target) is not ast.Name:
             continue
-        if not (target.id.startswith('__') and target.id.endswith('__')):
+        if not (target.id.startswith("__") and target.id.endswith("__")):
             continue
 
         name = target.id[2:-2]
@@ -39,7 +40,7 @@ def read_tags(filename):
     return res
 
 
-def read_requirements(filename='requirements.txt'):
+def read_requirements(filename="requirements.txt"):
     """Reads the list of requirements from given file.
 
     :param filename: Filename to read the requirements from.
@@ -48,17 +49,17 @@ def read_requirements(filename='requirements.txt'):
     :return: Requirements as list of strings
     """
     # allow for some leeway with the argument
-    if not filename.startswith('requirements'):
-        filename = 'requirements-' + filename
+    if not filename.startswith("requirements"):
+        filename = "requirements-" + filename
     if not os.path.splitext(filename)[1]:
-        filename += '.txt'  # no extension, add default
+        filename += ".txt"  # no extension, add default
 
     def valid_line(line):
         line = line.strip()
-        return line and not any(line.startswith(p) for p in ('#', '-'))
+        return line and not any(line.startswith(p) for p in ("#", "-"))
 
     def extract_requirement(line):
-        egg_eq = '#egg='
+        egg_eq = "#egg="
         if egg_eq in line:
             _, requirement = line.split(egg_eq, 1)
             return requirement
@@ -71,24 +72,23 @@ def read_requirements(filename='requirements.txt'):
 
 # setup() call
 
-tags = read_tags(os.path.join('callee', '__init__.py'))
+tags = read_tags(os.path.join("argmatch", "__init__.py"))
 __doc__ = __doc__.format(**tags)
 
-tests_require = read_requirements('test')
+tests_require = read_requirements("test")
 if sys.version_info < (2, 7):
-    tests_require.extend(read_requirements('test-py26'))
+    tests_require.extend(read_requirements("test-py26"))
 if sys.version_info < (3, 3):
-    tests_require.extend(read_requirements('test-py32'))
+    tests_require.extend(read_requirements("test-py32"))
 
 setup(
-    name="callee",
-    version=tags['version'],
-    description=tags['description'],
+    name="argmatch",
+    version=tags["version"],
+    description=tags["description"],
     long_description=__doc__,
-    author=tags['author'],
-    url="https://github.com/Xion/callee",
-    license=tags['license'],
-
+    author=tags["author"],
+    url="https://github.com/mdgilene/argmatch",
+    license=tags["license"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -106,9 +106,7 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
         "Topic :: Software Development :: Testing",
     ],
-
-    platforms='any',
-    packages=find_packages(exclude=['tests']),
-
+    platforms="any",
+    packages=find_packages(exclude=["tests"]),
     tests_require=tests_require,
 )

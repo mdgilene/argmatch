@@ -1,11 +1,12 @@
 """
 Tests for general matchers.
 """
+
 import sys
 
-from taipan.testing import skipIf, skipUnless
+from unittest import skipIf, skipUnless
 
-import callee.general as __unit__
+import argmatch.general as __unit__
 from tests import MatcherTestCase
 
 
@@ -15,14 +16,14 @@ IS_PY33 = sys.version_info >= (3, 3)
 class Any(MatcherTestCase):
     test_none = lambda self: self.assert_match(None)
     test_zero = lambda self: self.assert_match(0)
-    test_empty_string = lambda self: self.assert_match('')
+    test_empty_string = lambda self: self.assert_match("")
     test_empty_list = lambda self: self.assert_match([])
     test_empty_tuple = lambda self: self.assert_match(())
     test_some_object = lambda self: self.assert_match(object())
     test_some_string = lambda self: self.assert_match("Alice has a cat")
     test_some_number = lambda self: self.assert_match(42)
     test_some_list = lambda self: self.assert_match([1, 2, 3, 5, 8, 13])
-    test_some_tuple = lambda self: self.assert_match(('foo', -1, ['bar']))
+    test_some_tuple = lambda self: self.assert_match(("foo", -1, ["bar"]))
 
     test_repr = lambda self: self.assert_repr(__unit__.Any())
 
@@ -31,6 +32,7 @@ class Any(MatcherTestCase):
 
 
 # Predicate matcher
+
 
 class Matching(MatcherTestCase):
     EVEN = staticmethod(lambda x: x % 2 == 0)
@@ -55,8 +57,8 @@ class Matching(MatcherTestCase):
         self.assert_no_match(0, self.ODD)
 
     def test_empty_string(self):
-        self.assert_match('', self.SHORTER_THAN_THREE)
-        self.assert_no_match('', self.LONGER_THAN_THREE)
+        self.assert_match("", self.SHORTER_THAN_THREE)
+        self.assert_no_match("", self.LONGER_THAN_THREE)
 
     def test_empty_list(self):
         self.assert_match([], self.SHORTER_THAN_THREE)
@@ -74,12 +76,12 @@ class Matching(MatcherTestCase):
     # Assertion functions
 
     def assert_match(self, value, predicate):
-        return super(Matching, self) \
-            .assert_match(__unit__.Matching(predicate), value)
+        return super(Matching, self).assert_match(__unit__.Matching(predicate), value)
 
     def assert_no_match(self, value, predicate):
-        return super(Matching, self) \
-            .assert_no_match(__unit__.Matching(predicate), value)
+        return super(Matching, self).assert_no_match(
+            __unit__.Matching(predicate), value
+        )
 
 
 class MatchingRepr(MatcherTestCase):
@@ -96,7 +98,8 @@ class MatchingRepr(MatcherTestCase):
 
     def test_desc__trimmed(self):
         desc = "Long description with extraneous characters: %s" % (
-            "x" * __unit__.Matching.MAX_DESC_LENGTH,)
+            "x" * __unit__.Matching.MAX_DESC_LENGTH,
+        )
         matcher = __unit__.Matching(bool, desc)
 
         self.assertNotIn(desc, repr(matcher))
@@ -109,17 +112,19 @@ class MatchingRepr(MatcherTestCase):
     def test_local_function__py2(self):
         def predicate(_):
             return True
-        self.assert_named_repr('predicate', predicate)
+
+        self.assert_named_repr("predicate", predicate)
 
     @skipUnless(IS_PY33, "requires Python 3.3+")
     def test_local_function__py33(self):
         def predicate(_):
             return True
+
         matcher = __unit__.Matching(predicate)
-        self.assertIn('<locals>.predicate', repr(matcher))
+        self.assertIn("<locals>.predicate", repr(matcher))
 
     def test_function(self):
-        self.assert_named_repr('predicate', predicate)
+        self.assert_named_repr("predicate", predicate)
 
     def test_staticmethod__lambda(self):
         self.assert_lambda_repr(MatchingRepr.staticmethod_lambda)
@@ -127,13 +132,15 @@ class MatchingRepr(MatcherTestCase):
     @skipIf(IS_PY33, "requires Python 2.x or 3.2")
     def test_staticmethod__function__py2(self):
         # In Python 2, static methods are exactly the same as global functions.
-        self.assert_named_repr('staticmethod_function',
-                               MatchingRepr.staticmethod_function)
+        self.assert_named_repr(
+            "staticmethod_function", MatchingRepr.staticmethod_function
+        )
 
     @skipUnless(IS_PY33, "requires Python 3.3+")
     def test_staticmethod__function__py33(self):
-        self.assert_named_repr('MatchingRepr.staticmethod_function',
-                               MatchingRepr.staticmethod_function)
+        self.assert_named_repr(
+            "MatchingRepr.staticmethod_function", MatchingRepr.staticmethod_function
+        )
 
     def test_classmethod__lambda(self):
         self.assert_lambda_repr(MatchingRepr.classmethod_lambda)
@@ -141,52 +148,55 @@ class MatchingRepr(MatcherTestCase):
     @skipIf(IS_PY33, "requires Python 2.x or 3.2")
     def test_classmethod__function__py2(self):
         matcher = __unit__.Matching(MatchingRepr.classmethod_function)
-        self.assertIn(' classmethod_function', repr(matcher))
+        self.assertIn(" classmethod_function", repr(matcher))
 
     @skipUnless(IS_PY33, "requires Python 3.3+")
     def test_classmethod__function__py33(self):
-        self.assert_named_repr('MatchingRepr.classmethod_function',
-                               MatchingRepr.classmethod_function)
+        self.assert_named_repr(
+            "MatchingRepr.classmethod_function", MatchingRepr.classmethod_function
+        )
 
     def test_class(self):
-        self.assert_named_repr('Class', Class)
+        self.assert_named_repr("Class", Class)
 
     @skipIf(IS_PY33, "requires Python 2.x or 3.2")
     def test_inner_class__py2(self):
-        self.assert_named_repr('Class', MatchingRepr.Class)
+        self.assert_named_repr("Class", MatchingRepr.Class)
 
     @skipUnless(IS_PY33, "requires Python 3.3+")
     def test_inner_class__py33(self):
-        self.assert_named_repr('MatchingRepr.Class', MatchingRepr.Class)
+        self.assert_named_repr("MatchingRepr.Class", MatchingRepr.Class)
 
     @skipIf(IS_PY33, "requires Python 2.x or 3.2")
     def test_local_class__py2(self):
         class Class(object):
             def __call__(self, _):
                 return True
-        self.assert_named_repr('Class', Class)
+
+        self.assert_named_repr("Class", Class)
 
     @skipUnless(IS_PY33, "requires Python 3.3+")
     def test_local_class__py33(self):
         class Class(object):
             def __call__(self, _):
                 return True
+
         matcher = __unit__.Matching(Class)
-        self.assertIn('<locals>.Class', repr(matcher))
+        self.assertIn("<locals>.Class", repr(matcher))
 
     def test_callable_object(self):
         matcher = __unit__.Matching(Class())
-        self.assertIn('object at', repr(matcher))
+        self.assertIn("object at", repr(matcher))
 
     # Utility functons
 
     def assert_lambda_repr(self, predicate):
         matcher = __unit__.Matching(predicate)
-        self.assertIn('<lambda> ', repr(matcher))  # the space matters!
+        self.assertIn("<lambda> ", repr(matcher))  # the space matters!
 
     def assert_named_repr(self, name, predicate):
         matcher = __unit__.Matching(predicate)
-        self.assertIn(':' + name, repr(matcher))
+        self.assertIn(":" + name, repr(matcher))
 
     # Test predicates
 
@@ -218,6 +228,7 @@ class Class(object):
 
 # Argument captor
 
+
 class Captor(MatcherTestCase):
     ARG = object()
     FALSE_MATCHER = __unit__.Matching(lambda _: False)
@@ -228,7 +239,7 @@ class Captor(MatcherTestCase):
 
     def test_ctor__invalid_matcher(self):
         not_matcher = object()
-        with self.assertRaisesRegexp(TypeError, r'expected'):
+        with self.assertRaisesRegexp(TypeError, r"expected"):
             __unit__.Captor(not_matcher)
 
     def test_ctor__matcher(self):
@@ -238,7 +249,7 @@ class Captor(MatcherTestCase):
 
     def test_ctor__captor(self):
         captor = __unit__.Captor()
-        with self.assertRaisesRegexp(TypeError, r'captor'):
+        with self.assertRaisesRegexp(TypeError, r"captor"):
             __unit__.Captor(captor)
 
     def test_has_value__initial(self):
@@ -258,14 +269,14 @@ class Captor(MatcherTestCase):
 
     def test_arg__initial(self):
         captor = __unit__.Captor()
-        with self.assertRaisesRegexp(ValueError, r'no value'):
+        with self.assertRaisesRegexp(ValueError, r"no value"):
             captor.arg
 
     def test_arg__not_captured(self):
         # When the argument fails the matcher test, it should not be captured.
         captor = __unit__.Captor(self.FALSE_MATCHER)
         captor.match(self.ARG)
-        with self.assertRaisesRegexp(ValueError, r'no value'):
+        with self.assertRaisesRegexp(ValueError, r"no value"):
             captor.arg
 
     def test_arg__captured(self):
@@ -284,7 +295,7 @@ class Captor(MatcherTestCase):
     def test_match__double_capture(self):
         captor = __unit__.Captor()
         captor.match(self.ARG)
-        with self.assertRaisesRegexp(ValueError, r'already'):
+        with self.assertRaisesRegexp(ValueError, r"already"):
             captor.match(self.ARG)
 
     def test_repr__not_captured(self):

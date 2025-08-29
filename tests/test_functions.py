@@ -1,16 +1,17 @@
 """
 Tests for function matchers.
 """
+
 import platform
 
-from taipan.testing import skipIf, skipUnless
+from unittest import skipIf, skipUnless
 
-from callee._compat import IS_PY3, asyncio
-import callee.functions as __unit__
+from argmatch._compat import IS_PY3, asyncio
+import argmatch.functions as __unit__
 from tests import IS_PY34, IS_PY35, MatcherTestCase, python_code
 
 
-IS_PYPY3 = IS_PY3 and platform.python_implementation() == 'PyPy'
+IS_PYPY3 = IS_PY3 and platform.python_implementation() == "PyPy"
 
 
 class Callable(MatcherTestCase):
@@ -22,6 +23,7 @@ class Callable(MatcherTestCase):
     def test_function(self):
         def func():
             pass
+
         self.assert_match(func)
 
     test_method = lambda self: self.assert_match(str.upper)
@@ -31,11 +33,13 @@ class Callable(MatcherTestCase):
         class Foo(object):
             def __call__(self):
                 pass
+
         self.assert_match(Foo())
 
     def test_generator_function(self):
         def func():
             yield
+
         self.assert_match(func)
         self.assert_no_match(func())
 
@@ -50,8 +54,7 @@ class Callable(MatcherTestCase):
         return super(Callable, self).assert_match(__unit__.Callable(), value)
 
     def assert_no_match(self, value):
-        return super(Callable, self) \
-            .assert_no_match(__unit__.Callable(), value)
+        return super(Callable, self).assert_no_match(__unit__.Callable(), value)
 
 
 class Function(MatcherTestCase):
@@ -63,6 +66,7 @@ class Function(MatcherTestCase):
     def test_function(self):
         def func():
             pass
+
         self.assert_match(func)
 
     @skipIf(IS_PYPY3, "requires non-PyPy3 interpreter")
@@ -80,11 +84,13 @@ class Function(MatcherTestCase):
         class Foo(object):
             def __call__(self):
                 pass
+
         self.assert_no_match(Foo())
 
     def test_generator_function(self):
         def func():
             yield
+
         self.assert_match(func)
         self.assert_no_match(func())
 
@@ -99,8 +105,7 @@ class Function(MatcherTestCase):
         return super(Function, self).assert_match(__unit__.Function(), value)
 
     def assert_no_match(self, value):
-        return super(Function, self) \
-            .assert_no_match(__unit__.Function(), value)
+        return super(Function, self).assert_no_match(__unit__.Function(), value)
 
 
 class GeneratorFunction(MatcherTestCase):
@@ -112,6 +117,7 @@ class GeneratorFunction(MatcherTestCase):
     def test_function(self):
         def func():
             pass
+
         self.assert_no_match(func)
 
     test_method = lambda self: self.assert_no_match(str.upper)
@@ -121,11 +127,13 @@ class GeneratorFunction(MatcherTestCase):
         class Foo(object):
             def __call__(self):
                 pass
+
         self.assert_no_match(Foo())
 
     def test_generator_function(self):
         def func():
             yield
+
         self.assert_match(func)
         self.assert_no_match(func())
 
@@ -137,12 +145,14 @@ class GeneratorFunction(MatcherTestCase):
     # Assertion functions
 
     def assert_match(self, value):
-        return super(GeneratorFunction, self) \
-            .assert_match(__unit__.GeneratorFunction(), value)
+        return super(GeneratorFunction, self).assert_match(
+            __unit__.GeneratorFunction(), value
+        )
 
     def assert_no_match(self, value):
-        return super(GeneratorFunction, self) \
-            .assert_no_match(__unit__.GeneratorFunction(), value)
+        return super(GeneratorFunction, self).assert_no_match(
+            __unit__.GeneratorFunction(), value
+        )
 
 
 class CoroutineFunction(MatcherTestCase):
@@ -154,6 +164,7 @@ class CoroutineFunction(MatcherTestCase):
     def test_function(self):
         def func():
             pass
+
         self.assert_no_match(func)
 
     test_method = lambda self: self.assert_no_match(str.upper)
@@ -163,19 +174,21 @@ class CoroutineFunction(MatcherTestCase):
         class Foo(object):
             def __call__(self):
                 pass
+
         self.assert_no_match(Foo())
 
     def test_generator_function(self):
         def func():
             yield
+
         self.assert_no_match(func)
         self.assert_no_match(func())
 
     @skipUnless(IS_PY34, "requires Python 3.4+")
     def test_coroutine__decorator(self):
-        @asyncio.coroutine
-        def coro_func(loop):
+        async def coro_func(loop):
             pass
+
         coro = self.await_(coro_func)
         self.assert_no_match(coro)
 
@@ -184,21 +197,25 @@ class CoroutineFunction(MatcherTestCase):
         # This whole test uses the asynchronous coroutine definition syntax
         # which is invalid on Python <3.5 so it has to be executed from string.
         try:
-            exec(python_code("""
+            exec(
+                python_code(
+                    """
                 async def coro_func():
                     pass
                 coro = coro_func()
                 self.await_(coro)  # to prevent a warning
                 self.assert_no_match(coro)
-            """))
+            """
+                )
+            )
         except SyntaxError:
             pass
 
     @skipUnless(IS_PY34, "requires Python 3.4+")
     def test_coroutine_function__decorator(self):
-        @asyncio.coroutine
-        def coro_func(loop):
+        async def coro_func(loop):
             pass
+
         self.assert_match(coro_func)
 
     @skipUnless(IS_PY35, "requires Python 3.5+")
@@ -206,11 +223,15 @@ class CoroutineFunction(MatcherTestCase):
         # This whole test uses the asynchronous coroutine definition syntax
         # which is invalid on Python <3.5 so it has to be executed from string.
         try:
-            exec(python_code("""
+            exec(
+                python_code(
+                    """
                 async def coro_func():
                     pass
                 self.assert_match(coro_func)
-            """))
+            """
+                )
+            )
         except SyntaxError:
             pass
 
@@ -219,9 +240,11 @@ class CoroutineFunction(MatcherTestCase):
     # Assertion functions
 
     def assert_match(self, value):
-        return super(CoroutineFunction, self) \
-            .assert_match(__unit__.CoroutineFunction(), value)
+        return super(CoroutineFunction, self).assert_match(
+            __unit__.CoroutineFunction(), value
+        )
 
     def assert_no_match(self, value):
-        return super(CoroutineFunction, self) \
-            .assert_no_match(__unit__.CoroutineFunction(), value)
+        return super(CoroutineFunction, self).assert_no_match(
+            __unit__.CoroutineFunction(), value
+        )

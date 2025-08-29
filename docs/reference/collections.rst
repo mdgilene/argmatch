@@ -1,7 +1,7 @@
 Collection matchers
 ===================
 
-.. currentmodule:: callee.collections
+.. currentmodule:: argmatch.collections
 
 Besides allowing you to assert about various collection types (lists, sets, etc.),
 these matchers can also verify the *elements* inside those collections.

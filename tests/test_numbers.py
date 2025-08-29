@@ -1,12 +1,13 @@
 """
 Tests for numeric matchers.
 """
+
 from fractions import Fraction
 
-from taipan.testing import skipIf, skipUnless
+from unittest import skipIf, skipUnless
 
-from callee._compat import IS_PY3
-import callee.numbers as __unit__
+from argmatch._compat import IS_PY3
+import argmatch.numbers as __unit__
 from tests import MatcherTestCase
 
 
@@ -18,7 +19,7 @@ class Number(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_match(eval('0l'))
+        self.assert_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_match(Fraction(3, 4))
     test_float = lambda self: self.assert_match(0.0)
@@ -43,7 +44,7 @@ class Complex(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_match(eval('0l'))
+        self.assert_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_match(Fraction(5, 7))
     test_float = lambda self: self.assert_match(0.0)
@@ -68,7 +69,7 @@ class Real(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_match(eval('0l'))
+        self.assert_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_match(Fraction(7, 9))
     test_float = lambda self: self.assert_match(0.0)
@@ -93,7 +94,7 @@ class Float(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_no_match(eval('0l'))
+        self.assert_no_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_no_match(Fraction(9, 11))
     test_float = lambda self: self.assert_match(0.0)
@@ -118,7 +119,7 @@ class Integral(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_match(eval('0l'))
+        self.assert_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_no_match(Fraction(7, 9))
     test_float = lambda self: self.assert_no_match(0.0)
@@ -132,8 +133,7 @@ class Integral(MatcherTestCase):
         return super(Integral, self).assert_match(__unit__.Integral(), value)
 
     def assert_no_match(self, value):
-        return super(Integral, self) \
-            .assert_no_match(__unit__.Integral(), value)
+        return super(Integral, self).assert_no_match(__unit__.Integral(), value)
 
 
 class Integer(MatcherTestCase):
@@ -144,7 +144,7 @@ class Integer(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_no_match(eval('0l'))
+        self.assert_no_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_no_match(Fraction(9, 11))
     test_float = lambda self: self.assert_no_match(0.0)
@@ -176,7 +176,7 @@ class Long(MatcherTestCase):
 
     @skipIf(IS_PY3, "requires Python 2.x")
     def test_long(self):
-        self.assert_match(eval('0l'))
+        self.assert_match(eval("0l"))
 
     test_fraction = lambda self: self.assert_no_match(Fraction(9, 11))
     test_float = lambda self: self.assert_no_match(0.0)
