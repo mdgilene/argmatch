@@ -181,16 +181,16 @@ class FileLike(MatcherTestCase):
             __unit__.FileLike(read=None, write=None)
 
     def test_repr(self):
-        self.assertEquals(
+        self.assertEqual(
             "<FileLike (read)>", repr(__unit__.FileLike(read=True, write=None))
         )
-        self.assertEquals(
+        self.assertEqual(
             "<FileLike (read,write)>", repr(__unit__.FileLike(read=True, write=True))
         )
-        self.assertEquals(
+        self.assertEqual(
             "<FileLike (noread)>", repr(__unit__.FileLike(read=False, write=None))
         )
-        self.assertEquals(
+        self.assertEqual(
             "<FileLike (noread,nowrite)>",
             repr(__unit__.FileLike(read=False, write=False)),
         )
