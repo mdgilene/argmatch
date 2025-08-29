@@ -1,13 +1,12 @@
 [tool.poetry]
 name = "argmatch"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = ["Matt Gilene <mdgilene@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.28.4"
