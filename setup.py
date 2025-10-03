@@ -93,6 +93,11 @@ setup(
     author=tags["author"],
     url="https://github.com/mdgilene/argmatch",
     license=tags["license"],
+    project_urls={
+        "Homepage": "https://github.com/mdgilene/argmatch",
+        "Issues": "https://github.com/mdgilene/argmatch/issues",
+        "Repository": "https://github.com/mdgilene/argmatch",
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

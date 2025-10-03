@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "argmatch"
-version = "1.0.2"
+version = "1.0.3"
 description = ""
 authors = ["Matt Gilene <mdgilene@gmail.com>"]
 readme = "README.md"
@@ -19,6 +19,12 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
   "Topic :: Software Development :: Testing"
 ]
+
+[project.urls]
+Homepage = "https://github.com/mdgilene/argmatch"
+Documentation = "https://argmatch.readthedocs.io"
+Repository = "https://github.com/mdgilene/argmatch"
+Issues = "https://github.com/mdgilene/argmatch/issues"
 
 [tool.poetry.dependencies]
 python = "^3.10"
