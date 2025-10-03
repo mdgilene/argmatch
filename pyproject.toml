@@ -20,7 +20,7 @@ classifiers = [
   "Topic :: Software Development :: Testing"
 ]
 
-[project.urls]
+[tool.poetry.urls]
 Homepage = "https://github.com/mdgilene/argmatch"
 Documentation = "https://argmatch.readthedocs.io"
 Repository = "https://github.com/mdgilene/argmatch"
