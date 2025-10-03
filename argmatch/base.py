@@ -158,7 +158,7 @@ class Matcher(BaseMatcher):
     """
 
     def __repr__(self):
-        """Provides a default ``repr``\ esentation for custom matchers.
+        """Provides a default ``repr``esentation for custom matchers.
 
         This representation will include matcher class name
         and the values of its public attributes.

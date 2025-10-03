@@ -23,7 +23,7 @@ class TypeMatcher(BaseMatcher):
     """
 
     def __init__(self, type_):
-        """:param type\ _: Type to match against"""
+        """:param type\\_: Type to match against"""
         if not isinstance(type_, type):
             raise TypeError(
                 "%s requires a type, got %r" % (self.__class__.__name__, type_)
@@ -42,7 +42,7 @@ class InstanceOf(TypeMatcher):
 
     def __init__(self, type_, exact=False):
         """
-        :param type\ _: Type to match against
+        :param type\\_: Type to match against
         :param exact:
 
             If True, the match will only succeed if the value type matches
@@ -70,7 +70,7 @@ class SubclassOf(TypeMatcher):
 
     def __init__(self, type_, strict=False):
         """
-        :param type\ _: Type to match against
+        :param type\\_: Type to match against
         :param strict:
 
             If True, the match if only succeed if the value is a _strict_
